@@ -35,3 +35,19 @@ d3.json(url).then(function (response) {
         else {
             color = "#fc0303";
         }
+
+        cord = [
+            response.features[i].geometry.coordinates[1],
+            response.features[i].geometry.coordinates[0],
+            response.features[i].geometry.coordinates[2]
+        ];
+        z.push(cord[2]);
+        // Add circles to the map.
+        L.circle(cord, {
+            fillOpacity: 0.75,
+            color: color,
+            // Adjust the radius.
+            radius: Math.sqrt(Math.abs(zCord)) * 10000
+        }).bindPopup(`<h1>${response.features[i].properties.place}</h1> <hr> <h3>Magnitude * 10 = ${response.features[i].properties.mag * 10}</h3>`).addTo(myMap);
+    };
+});
