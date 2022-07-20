@@ -14,7 +14,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 d3.json(url).then(function (response) {
     z = []
     for (let i = 0; i < response.features.length; i++) {
-        // Conditionals for country points
         var color = "";
         var zCord = response.features[i].geometry.coordinates[2]
         if (zCord > -10 && zCord < 10) {
@@ -42,12 +41,29 @@ d3.json(url).then(function (response) {
             response.features[i].geometry.coordinates[2]
         ];
         z.push(cord[2]);
-        // Add circles to the map.
+        // Adding the circles to the map
         L.circle(cord, {
             fillOpacity: 0.75,
             color: color,
-            // Adjust the radius.
             radius: Math.sqrt(Math.abs(zCord)) * 10000
         }).bindPopup(`<h1>${response.features[i].properties.place}</h1> <hr> <h3>Magnitude * 10 = ${response.features[i].properties.mag * 10}</h3>`).addTo(myMap);
     };
 });
+
+// Adding legend
+function addLegend(map) {
+    var legend = L.control({ position: "bottomright" });
+    legend.onAdd = function (myMap) {
+        var div = L.DomUtil.create("div", "legend");
+        div.innerHTML += '<h3>Depth (km)</h3>';
+        div.innerHTML += '<i style="background: #4efc03"></i><span>-10 - 10</span><br>';
+        div.innerHTML += '<i style="background: #bafc03"></i><span>10 - 30</span><br>';
+        div.innerHTML += '<i style="background: #fcec03"></i><span>30 - 50</span><br>';
+        div.innerHTML += '<i style="background: #fc9003"></i><span>50 - 70</span><br>';
+        div.innerHTML += '<i style="background: #fc4903"></i><span>70 - 90</span><br>';
+        div.innerHTML += '<i style="background: #fc0303"></i><span>90+</span><br>';
+        return div;
+    }
+    legend.addTo(map);
+};
+addLegend(myMap);
